@@ -1,0 +1,12 @@
+select *from customers;
+select count(distinct customer_state) from customers;
+select count(customer_id) from customers;
+select count(distinct customer_state) from customers;
+select count(distinct customer_city) from customers;
+select * from geolocation;
+select max(geolocation_lng) from geolocation;
+select min(geolocation_lng) from geolocation;
+select * from products;
+select* from payments;
+select max(payment_value) from payments;
+select avg(payment_value) from payments;
