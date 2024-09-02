@@ -57,5 +57,66 @@ where milliseconds > (
 )
 order by milliseconds desc;
 
+-- Find how much amount spent by each customer on artist? 
+-- write a query to return customer name,artist name and total spent?
+
+
+with best_selling_artist as (
+select artist.id as artist_id,artist.name as artist_name,
+sum(invoice_line.unitprice * invoice_line.quantity) as total_sales 
+from  invoice_line 
+join track on invoice_line.track_id = track.track_id
+join album2 on track.album_id = album2.album_id
+join artist on album2.artist_id = artist.artist_id
+group by artist_id,artist_name
+order by total_sales desc 
+limit 1
+)
+
+
+
+
+WITH best_selling_artist AS (
+    SELECT 
+        artist.id AS artist_id,
+        artist.name AS artist_name,
+        SUM(invoice_line.unitprice * invoice_line.quantity) AS total_sales
+    FROM 
+        invoice_line
+    JOIN 
+        track ON invoice_line.track_id = track.track_id
+    JOIN 
+        album2 ON track.album_id = album2.album_id
+    JOIN 
+        artist ON album2.artist_id = artist.id  -- Fixed the join condition, changed artist.artist_id to artist.id
+    GROUP BY 
+        artist.id, artist.name
+    ORDER BY 
+        total_sales DESC 
+    LIMIT 1
+)
+SELECT 
+    customer.customer_id,
+    customer.first_name,
+    customer.last_name,  
+    bsa.artist_name,
+    SUM(il.unitprice * il.quantity) AS amount_spent
+FROM 
+    invoice i
+JOIN 
+    customer ON customer.customer_id = i.customer_id
+JOIN 
+    invoice_line il ON il.invoice_id = i.invoice_id
+JOIN 
+    track t ON t.track_id = il.track_id
+JOIN 
+    album2 alb ON alb.album_id = t.album_id
+JOIN 
+    best_selling_artist bsa ON bsa.artist_id = alb.artist_id
+GROUP BY 
+    customer.customer_id, customer.first_name, customer.last_name, bsa.artist_name  -- Fixed artist_name reference to include alias
+ORDER BY 
+    amount_spent DESC 
+LIMIT 1;
 
 
